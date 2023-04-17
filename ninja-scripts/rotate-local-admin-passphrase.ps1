@@ -1,26 +1,20 @@
 #Let's check for your powershell version
 if ($PSVersionTable.PSVersion.Major -ge 3) {
-    Write-Host "PowerShell version 3.0 or higher is installed."
+    Write-Host "PowerShell version 3.0 or higher is installed.  You're good to proceed!"
 } else {
     Write-Error "PowerShell version 3.0 or higher is required to run this script."
-    break
+    exit
 }
 #Script variables set below:
 $ChangeAdminUsername = $true
-$NewAdminUsername = "ctsladmin"
+$NewAdminUsername = "MSPAdmin"
 
 #####################################################################
 #Let's make a password!
 add-type -AssemblyName System.Web
 
 #We will attempt to generate a passphrase first.  Requires access to makemeapassword.ligos.net - open source
-try {
-    # Code that may throw an exception
-    $LocalAdminPassword = (Invoke-RestMethod -Uri "https://makemeapassword.ligos.net/api/v1/passphrase/plain?pc=1&wc=3&sp=y&minCh=21&maxCh=30&whenNum=EndOfPhrase&whenUp=StartOfWord")
-} catch {
-    # Code that will handle the exception
-    Write-Warning "Error occurred while trying to generate password: $($_.Exception.Message)"
-}
+$LocalAdminPassword = (Invoke-RestMethod -Uri "https://makemeapassword.ligos.net/api/v1/passphrase/plain?pc=1&wc=3&sp=y&minCh=21&maxCh=45&whenNum=EndOfPhrase&whenUp=StartOfWord")
 $randomChar = [System.Web.Security.Membership]::GeneratePassword(1,1).ToString() #Generates a random character for complexity requirements
 $LocalAdminPassword = -join($LocalAdminPassword.Trim(), $randomChar) #Adds the random character from randomChar to the end of our passphrase
 
@@ -31,7 +25,7 @@ if($LocalAdminPassword.Length -le 20){
 }
 if($LocalAdminPassword.Length -le 20){
     Write-Error "Insufficient password length, aborting."
-    break
+    exit
 }
 
 #####################################################################
