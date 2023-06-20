@@ -44,6 +44,9 @@ if ($exists -eq $true) {
     Write-Host "Cleaning up old files"
     Remove-Item $path\sysmon.zip -Force
     Remove-Item $path\sysmon -Force -Recurse}
+#Set tls version 1.2
+
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 Invoke-WebRequest -Uri https://download.sysinternals.com/files/Sysmon.zip -Outfile Sysmon.zip
 
